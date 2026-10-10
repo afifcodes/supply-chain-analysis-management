@@ -83,6 +83,18 @@ npm run dev
 
 Frontend runs at `http://localhost:5173`.
 
+## Deploy Frontend To Vercel
+
+This repository includes `vercel.json` at the project root so Vercel can build the React app from the `frontend` folder when you import the full GitHub repository.
+
+In Vercel, set this environment variable before deploying:
+
+```text
+VITE_API_BASE_URL=https://your-hosted-backend-url/api
+```
+
+For a frontend-only Vercel deployment, the Spring Boot backend must still be running somewhere reachable by the browser, such as Render, Railway, or another server. A local backend URL like `http://localhost:8080/api` only works on your own computer and will not work for other users visiting the Vercel site.
+
 ## Important API Routes
 
 - `GET /api/dashboard/summary`
