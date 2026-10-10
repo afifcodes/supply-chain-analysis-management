@@ -61,5 +61,49 @@ export type ReportsSummary = {
   deliveredOnTime: number;
   delayedDeliveries: number;
   totalOrderValue: number;
+  analytics: AnalyticsSummary;
+};
+
+export type AnalyticsSummary = {
+  inventoryValue: number;
+  averageOrderValue: number;
+  averageOrderQuantity: number;
+  stockTurnoverRatio: number;
+  totalUnitsSold: number;
+  unsuppliedProducts: number;
+  topProducts: ProductPerformance[];
+  categoryPerformance: CategoryPerformance[];
+  supplierPerformance: SupplierPerformance[];
+  monthlyRevenue: MonthlyRevenue[];
+  businessInsights: string[];
+};
+
+export type ProductPerformance = {
+  productId: number;
+  sku: string;
+  name: string;
+  unitsSold: number;
+  revenue: number;
+  currentStock: number;
+};
+
+export type CategoryPerformance = {
+  category: string;
+  productCount: number;
+  unitsSold: number;
+  revenue: number;
+  stockValue: number;
+};
+
+export type SupplierPerformance = {
+  supplier: string;
+  productCount: number;
+  stockValue: number;
+};
+
+export type MonthlyRevenue = {
+  month: string;
+  orderCount: number;
+  revenue: number;
 };
 

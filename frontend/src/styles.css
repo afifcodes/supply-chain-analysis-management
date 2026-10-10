@@ -173,6 +173,10 @@ textarea {
   grid-template-columns: repeat(3, minmax(150px, 1fr));
 }
 
+.metrics-grid.analytics {
+  grid-template-columns: repeat(6, minmax(130px, 1fr));
+}
+
 .metric-card,
 .panel {
   background: #fff;
@@ -360,6 +364,58 @@ th {
   height: 100%;
 }
 
+.analysis-row {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(140px, 1fr) minmax(120px, 2fr) minmax(100px, auto);
+  margin: 14px 0;
+}
+
+.analysis-row strong,
+.analysis-row span {
+  display: block;
+}
+
+.analysis-row span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.analysis-row b {
+  font-size: 0.92rem;
+  text-align: right;
+}
+
+.analysis-bar {
+  background: #edf2f7;
+  border-radius: 999px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.analysis-bar i {
+  background: #146b3a;
+  display: block;
+  height: 100%;
+}
+
+.insight-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.insight-list li {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  color: #334155;
+  padding: 11px 12px;
+}
+
 @media (max-width: 1050px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -385,6 +441,10 @@ th {
   .metrics-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .metrics-grid.analytics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -394,10 +454,20 @@ th {
 
   .sidebar nav,
   .metrics-grid,
+  .metrics-grid.analytics,
   .metrics-grid.small,
   .form-grid,
   .form-actions {
     grid-template-columns: 1fr;
+  }
+
+  .analysis-row {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-row b {
+    text-align: left;
   }
 
   .panel-header,

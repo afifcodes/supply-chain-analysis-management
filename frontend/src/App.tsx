@@ -565,6 +565,9 @@ function Deliveries({ deliveries }: { deliveries: Order[] }) {
 function Reports({ reports }: { reports: ReportsSummary | null }) {
   const statuses: OrderStatus[] = ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
   const max = Math.max(...statuses.map((status) => reports?.orderCountByStatus?.[status] ?? 0), 1);
+  const analytics = reports?.analytics;
+  const maxCategoryRevenue = Math.max(...(analytics?.categoryPerformance ?? []).map((category) => category.revenue), 1);
+  const maxMonthlyRevenue = Math.max(...(analytics?.monthlyRevenue ?? []).map((month) => month.revenue), 1);
   return (
     <section className="reports-grid">
       <div className="panel">
@@ -586,6 +589,91 @@ function Reports({ reports }: { reports: ReportsSummary | null }) {
           <article className="metric-card"><span>On time</span><strong>{reports?.deliveredOnTime ?? 0}</strong></article>
           <article className="metric-card"><span>Delayed</span><strong>{reports?.delayedDeliveries ?? 0}</strong></article>
           <article className="metric-card"><span>Order value</span><strong>{money(reports?.totalOrderValue ?? 0)}</strong></article>
+        </div>
+      </div>
+      <div className="panel wide">
+        <h2>EDA Snapshot</h2>
+        <div className="metrics-grid analytics">
+          <article className="metric-card"><span>Inventory value</span><strong>{money(analytics?.inventoryValue ?? 0)}</strong></article>
+          <article className="metric-card"><span>Avg order value</span><strong>{money(analytics?.averageOrderValue ?? 0)}</strong></article>
+          <article className="metric-card"><span>Avg qty/order</span><strong>{numberValue(analytics?.averageOrderQuantity ?? 0)}</strong></article>
+          <article className="metric-card"><span>Units sold</span><strong>{analytics?.totalUnitsSold ?? 0}</strong></article>
+          <article className="metric-card"><span>Stock turnover</span><strong>{numberValue(analytics?.stockTurnoverRatio ?? 0)}x</strong></article>
+          <article className="metric-card"><span>No supplier</span><strong>{analytics?.unsuppliedProducts ?? 0}</strong></article>
+        </div>
+      </div>
+      <div className="panel">
+        <h2>Top Products By Revenue</h2>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>SKU</th><th>Units</th><th>Revenue</th><th>Stock</th></tr></thead>
+            <tbody>
+              {(analytics?.topProducts ?? []).map((product) => (
+                <tr key={product.productId}>
+                  <td>{product.name}</td>
+                  <td>{product.sku}</td>
+                  <td>{product.unitsSold}</td>
+                  <td>{money(product.revenue)}</td>
+                  <td>{product.currentStock}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {(analytics?.topProducts ?? []).length === 0 && <EmptyState text="No completed sales data yet." />}
+        </div>
+      </div>
+      <div className="panel">
+        <h2>Business Insights</h2>
+        <ul className="insight-list">
+          {(analytics?.businessInsights ?? ['No analytics available yet.']).map((insight) => (
+            <li key={insight}>{insight}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="panel">
+        <h2>Category Analysis</h2>
+        {(analytics?.categoryPerformance ?? []).map((category) => (
+          <div className="analysis-row" key={category.category}>
+            <div>
+              <strong>{category.category}</strong>
+              <span>{category.productCount} products · {category.unitsSold} units sold · stock {money(category.stockValue)}</span>
+            </div>
+            <div className="analysis-bar"><i style={{ width: `${(category.revenue / maxCategoryRevenue) * 100}%` }} /></div>
+            <b>{money(category.revenue)}</b>
+          </div>
+        ))}
+        {(analytics?.categoryPerformance ?? []).length === 0 && <EmptyState text="No category data yet." />}
+      </div>
+      <div className="panel">
+        <h2>Monthly Revenue Trend</h2>
+        {(analytics?.monthlyRevenue ?? []).map((month) => (
+          <div className="analysis-row" key={month.month}>
+            <div>
+              <strong>{month.month}</strong>
+              <span>{month.orderCount} orders</span>
+            </div>
+            <div className="analysis-bar"><i style={{ width: `${(month.revenue / maxMonthlyRevenue) * 100}%` }} /></div>
+            <b>{money(month.revenue)}</b>
+          </div>
+        ))}
+        {(analytics?.monthlyRevenue ?? []).length === 0 && <EmptyState text="No monthly revenue yet." />}
+      </div>
+      <div className="panel wide">
+        <h2>Supplier Stock Exposure</h2>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Supplier</th><th>Products</th><th>Stock Value</th></tr></thead>
+            <tbody>
+              {(analytics?.supplierPerformance ?? []).map((supplier) => (
+                <tr key={supplier.supplier}>
+                  <td>{supplier.supplier}</td>
+                  <td>{supplier.productCount}</td>
+                  <td>{money(supplier.stockValue)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {(analytics?.supplierPerformance ?? []).length === 0 && <EmptyState text="No supplier stock data yet." />}
         </div>
       </div>
       <div className="panel wide">
@@ -686,4 +774,8 @@ function supplierToForm(supplier: Supplier): SupplierForm {
 
 function money(value: number) {
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value);
+}
+
+function numberValue(value: number) {
+  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(value);
 }
